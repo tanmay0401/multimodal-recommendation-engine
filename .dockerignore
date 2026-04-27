@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.git/
+.gsd/
+.agent/
+.gitignore
+Dockerfile
+.dockerignore
+test_image.jpg
+infofortanmay/

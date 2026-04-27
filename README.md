@@ -1,13 +1,13 @@
 # Multi-Modal Semantic Recommendation System
 
-A production-grade, two-stage recommendation engine built for 100k+ products using joint image-text embeddings, deep retrieval, and gradient-boosted re-ranking.
+A production-grade, two-stage recommendation engine built for 44k+ real fashion products using joint image-text embeddings, deep retrieval, and gradient-boosted re-ranking.
 
 ## 🚀 Overview
 
 This system demonstrates a state-of-the-art recommendation architecture designed for scale and precision. It leverages **OpenAI CLIP** for multi-modal understanding, a **PyTorch Two-Tower model** for semantic retrieval, **FAISS** for sub-millisecond search, and **LightGBM** for precision re-ranking.
 
 ### Key Features
-- **100k+ Product Scale**: Optimized for high-volume catalogs.
+- **44k+ Real Products**: Trained on the Myntra Fashion Product Dataset from HuggingFace.
 - **Multi-Modal Queries**: Recommend products based on user history, image uploads, or both.
 - **Two-Stage Pipeline**: Combines deep semantic retrieval with feature-rich ranking.
 - **Ultra-Low Latency**: End-to-end inference in <10ms.
@@ -49,7 +49,7 @@ graph TD
 - **Vector Search**: FAISS (Facebook AI Similarity Search)
 - **Ranking**: LightGBM (LambdaMART)
 - **API**: FastAPI, Uvicorn
-- **Data**: Pandas, PyArrow, Faker
+- **Data**: Pandas, PyArrow, HuggingFace Datasets
 
 ## 🚦 Quick Start
 

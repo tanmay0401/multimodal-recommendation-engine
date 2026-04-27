@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Recommendation System</title>
+    <meta name="description" content="AI-powered multi-modal product recommendation engine using CLIP, FAISS and LightGBM.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-badge">AI-Powered</div>
+            <h1>Product Recommendations</h1>
+            <p>Find the best products using semantic search and user history.</p>
+        </header>
+
+        <main>
+            <section class="search-panel">
+                <h3 class="panel-title">Search</h3>
+                <form id="recommendForm">
+                    <div class="form-group">
+                        <label for="userId">User ID (Optional)</label>
+                        <input type="text" id="userId" name="user_id" placeholder="e.g., USER_00042">
+                    </div>
+
+                    <div class="form-divider"><span>or search by</span></div>
+
+                    <div class="form-group">
+                        <label for="textQuery">Text Search (Optional)</label>
+                        <input type="text" id="textQuery" name="query" placeholder="e.g., red dress, running shoes, blue handbag">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="imageUpload">Visual Search (Optional)</label>
+                        <div class="file-upload-wrapper" id="dropZone">
+                            <input type="file" id="imageUpload" name="image" accept="image/*">
+                            <div class="file-upload-label" id="fileUploadLabel">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                <span>Drop an image here or click to browse</span>
+                            </div>
+                        </div>
+                        <div id="imagePreviewContainer" class="image-preview-container hidden">
+                            <img id="imagePreview" src="" alt="Preview">
+                            <button type="button" id="clearImageBtn" class="clear-btn">&times;</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kResults">Number of Results</label>
+                        <input type="number" id="kResults" name="k" value="10" min="1" max="50">
+                    </div>
+
+                    <button type="submit" id="submitBtn">
+                        <span id="btnText">Get Recommendations</span>
+                        <svg id="btnSpinner" class="spinner hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                    </button>
+                </form>
+                <div id="statusMessage" class="status-message"></div>
+            </section>
+
+            <section class="results-panel">
+                <div class="results-header">
+                    <h2>Recommendations</h2>
+                    <span id="latencyBadge" class="badge hidden"></span>
+                </div>
+                <div id="resultsGrid" class="results-grid">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <p>Enter a User ID or upload an image to see recommendations.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

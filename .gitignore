@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# GSD workflow files
+.gsd/
+.agent/
+
+# Test files
+test_image.jpg
+
+# Temp/cache data (regenerated if needed)
+data/ranking_data.parquet
+data/interactions.parquet

@@ -5,6 +5,7 @@ import torch
 import os
 from tqdm import tqdm
 import argparse
+from PIL import Image
 
 def generate_embeddings(input_path="data/products.parquet", output_path="data/embeddings.npy", limit=None, batch_size=128):
     print(f"Loading data from {input_path}...")
@@ -20,12 +21,29 @@ def generate_embeddings(input_path="data/products.parquet", output_path="data/em
     
     model = SentenceTransformer('clip-ViT-B-32', device=device)
     
-    # Combine title and description for semantic embedding
-    texts = (df['title'] + " " + df['description']).tolist()
+    # Load images
+    print("Loading local images for embedding...")
+    images = []
+    valid_indices = []
     
-    print(f"Generating embeddings for {len(texts)} items...")
+    for idx, path in enumerate(tqdm(df['image_url'])):
+        try:
+            img = Image.open(path).convert('RGB')
+            images.append(img)
+            valid_indices.append(idx)
+        except Exception as e:
+            # Skip images that fail to load
+            pass
+            
+    # If some failed, filter them out from the dataframe
+    if len(valid_indices) < len(df):
+        print(f"Warning: {len(df) - len(valid_indices)} images failed to load. Filtering dataset.")
+        df = df.iloc[valid_indices].reset_index(drop=True)
+        df.to_parquet(input_path, index=False)
+        
+    print(f"Generating embeddings for {len(images)} images...")
     embeddings = model.encode(
-        texts, 
+        images, 
         batch_size=batch_size, 
         show_progress_bar=True, 
         convert_to_numpy=True,

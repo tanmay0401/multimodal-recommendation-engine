@@ -24,17 +24,44 @@ class Recommender:
         
     def recommend(self, user_feature_clip, k=10):
         """
-        user_feature_clip: [512] CLIP embedding representing user profile
+        User-history based retrieval. Passes through the User Tower.
+        user_feature_clip: [512] CLIP embedding representing user profile (mean of history)
         """
         start_time = time.time()
         
         with torch.no_grad():
             user_feat_tensor = torch.tensor(user_feature_clip, dtype=torch.float32).unsqueeze(0).to(self.device)
-            user_emb, _ = self.model(user_feat_tensor, user_feat_tensor) # Dummy item features
+            user_emb, _ = self.model(user_feat_tensor, user_feat_tensor) # User Tower output
             user_emb = user_emb.cpu().numpy().astype('float32')
             
         # FAISS search
         scores, indices = self.index.search(user_emb, k)
+        
+        end_time = time.time()
+        latency_ms = (end_time - start_time) * 1000
+        
+        results = self.products.iloc[indices[0]].copy()
+        results['relevance_score'] = scores[0]
+        
+        return results, latency_ms
+
+    def item_search(self, item_feature_clip, k=10):
+        """
+        Visual / item-to-item search. Passes through the Item Tower.
+        item_feature_clip: [512] CLIP embedding of an uploaded image
+        
+        The FAISS index stores Item Tower projections, so the query must also
+        go through the Item Tower to land in the same latent space.
+        """
+        start_time = time.time()
+        
+        with torch.no_grad():
+            item_feat_tensor = torch.tensor(item_feature_clip, dtype=torch.float32).unsqueeze(0).to(self.device)
+            _, item_emb = self.model(item_feat_tensor, item_feat_tensor) # Item Tower output
+            item_emb = item_emb.cpu().numpy().astype('float32')
+            
+        # FAISS search
+        scores, indices = self.index.search(item_emb, k)
         
         end_time = time.time()
         latency_ms = (end_time - start_time) * 1000

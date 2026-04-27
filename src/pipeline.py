@@ -48,22 +48,25 @@ class RecommendationPipeline:
         return np.mean(self.embeddings[history_idxs], axis=0)
 
     def recommend(self, user_id=None, image_feat=None, k=10):
-        # 1. Determine Query Embedding
+        # 1. Determine Query Embedding and correct retrieval path
         user_feat = self.get_user_embedding(user_id) if user_id else None
         
         if user_feat is not None and image_feat is not None:
             # Combined Personalized Visual Search
+            # Blend user history with image intent, route through Item Tower
+            # since the visual intent should dominate for relevance
             query_feat = (user_feat + image_feat) / 2
-        elif user_feat is not None:
-            query_feat = user_feat
+            candidates, retrieval_latency = self.recommender.item_search(query_feat, k=50)
         elif image_feat is not None:
-            query_feat = image_feat
+            # Pure Visual Search — use Item Tower (image is an item, not a user)
+            candidates, retrieval_latency = self.recommender.item_search(image_feat, k=50)
+        elif user_feat is not None:
+            # User History Search — use User Tower
+            candidates, retrieval_latency = self.recommender.recommend(user_feat, k=50)
         else:
-            # Fallback to random or popular (not implemented, using random for now)
+            # Fallback to random
             query_feat = np.random.randn(512).astype('float32')
-
-        # 2. Stage 1: Retrieval (Top 50 candidates)
-        candidates, retrieval_latency = self.recommender.recommend(query_feat, k=50)
+            candidates, retrieval_latency = self.recommender.recommend(query_feat, k=50)
         
         # 3. Stage 2: Re-Ranking
         if user_id in self.user_avg_prices:
@@ -82,6 +85,7 @@ class RecommendationPipeline:
         })
         
         candidates['ranking_score'] = self.ranker.predict(features)
+        candidates['cosine_sim'] = candidates['relevance_score']
         
         # Sort by ranking score
         final_results = candidates.sort_values("ranking_score", ascending=False).head(k)
