@@ -1,0 +1,15 @@
+torch
+transformers
+sentence-transformers
+pandas
+pyarrow
+faker
+tqdm
+numpy
+fastapi
+uvicorn
+faiss-cpu
+lightgbm
+scikit-learn
+pillow
+python-multipart
