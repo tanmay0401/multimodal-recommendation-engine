@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: multimodal-recommender
+    env: docker
+    plan: free
+    region: ohio
+    envVars:
+      - key: PORT
+        value: 8000
